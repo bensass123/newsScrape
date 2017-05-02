@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Article Comments</title>
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="fullscreen.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+  <script id="article-template" type="text/x-handlebars-template">
+    
+    <div class='container'>
+      {{#each this}}
+      <div class='row'>
+          <ul>
+          <li><a href={{href}}><h2>{{title}}</h2></a></li>
+          <p>The form below contains a textarea for comments:</p>
+            <form>
+                <div class="form-group">
+                <label for="comment">Comment:</label>
+                <textarea class="form-control" rows="5" id={{href}}></textarea>
+                </div>
+                <!--<button type="submit" class="btn btn-default">Submit</button>-->
+                
+                <button type="button" class="btn btn-lg btn-success catButton" onclick="postit(document.getElementById('{{ href }}').value, '{{ href }}');">Submit</button>
+            </form>
+            {{#each this.comment}}
+                {{ body }}
+            {{/each}}
+      </div>
+      {{/each}}
+    </div>
+  </script>  
+
+  <div id='results'></div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!--HANDLEBARS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    
+  <script>
+
+    var dbResults;
+    var arr = [];    
+
+    var postit = (comment = 'blank comment', href) => {
+        console.log('comment  ' + comment);
+        console.log('href  ' + href);
+        $.post('/addcomment', {comment, href});
+    }
+
+    var fillit = (obj) => {
+        // arr = $.makeArray( obj );
+        var source   = $("#article-template").html();
+        var template = Handlebars.compile(source);
+        var html = template(obj);
+        console.log(html);
+        $('#results').html(html);
+    }
+
+
+    var articles = () => {
+        $.getJSON("/articles/", function(result){
+                //populating the database
+                dbResults = result;
+                
+            }).then(() => {
+                fillit(dbResults);
+            });
+    }
+
+    var scrape = () => {
+        $.getJSON("/scrape/", function(result){
+            console.log('init scrape');
+        }).then(() => {
+            articles();
+        });
+    }
+
+    scrape();
+  </script>
+
+    
+    
+</body>
+
+</html>
