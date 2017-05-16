@@ -26,7 +26,19 @@
       <div class='row'>
           <ul>
           <li><a href={{href}}><h2>{{title}}</h2></a></li>
-          <p>The form below contains a textarea for comments:</p>
+          <div id='comments'>
+              <ul>
+                {{#each this.comments}}
+                    <li>{{ text }}<button id='{{_id}}' onclick="
+                            console.log(this);
+                            $.post('/delcomment', {text: '{{text}}', href:'{{href}}' });
+                            location.reload();
+                        "> DELETE COMMENT</BUTTON></li>
+                {{/each}}
+              </ul>
+        </div>
+            <br><BR>
+          <p>Submit comment below</p>
             <form>
                 <div class="form-group">
                 <label for="comment">Comment:</label>
@@ -36,9 +48,7 @@
                 
                 <button type="button" class="btn btn-lg btn-success catButton" onclick="postit(document.getElementById('{{ href }}').value, '{{ href }}');">Submit</button>
             </form>
-            {{#each this.comment}}
-                {{ body }}
-            {{/each}}
+            
       </div>
       {{/each}}
     </div>
@@ -62,6 +72,7 @@
         console.log('comment  ' + comment);
         console.log('href  ' + href);
         $.post('/addcomment', {comment, href});
+        location.reload();
     }
 
     var fillit = (obj) => {
