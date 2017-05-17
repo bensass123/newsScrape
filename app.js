@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Database configuration with mongoose
-mongoose.connect("mongodb://localhost/articles");
+mongoose.connect("mongodb://heroku_v486q58k:3m5j5c7a5qpebmnrlilacs7pad@ds143231.mlab.com:43231/heroku_v486q58k");
 var db = mongoose.connection;
 
 // Show any mongoose errors

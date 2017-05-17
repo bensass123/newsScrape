@@ -41,7 +41,7 @@ router.post('/addcomment', (req, res) => {
 
   //save comment to associated article
 
-  Article.findOneAndUpdate({"href": href}, {$push: {comments: comment}}, function(error, doc1) {
+  Article.findOneAndUpdate({"href": href}, {$addToSet: {comments: comment}}, function(error, doc1) {
         if(error){
           console.log(error);
         } else {
